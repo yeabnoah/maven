@@ -1,15 +1,50 @@
 "use client";
 import AuthImagePattern from "@/app/components/Pattern";
+import signupSchema from "@/app/validation/signup.schema";
 import { Eye, EyeOff, Lock, Mail, MessageSquare, User } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
+
+  type FormInterface = z.infer<typeof signupSchema>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormInterface>({
+    resolver: zodResolver(signupSchema),
+  });
+
+  const onSubmit: SubmitHandler<FormInterface> = async (data) => {
+    await authClient.signUp.email({
+      name: data.name,
+      email: data.email,
+      password: data.password,
+      fetchOptions: {
+        onSuccess: () => {
+          console.log("user created successfully");
+          toast.success("User created successfully");
+        },
+        onError: () => {
+          console.log("Error occurred while creating account");
+          toast.error("Error occurred while creating account");
+        },
+      },
+    });
+  };
+
   return (
-    <div className=" min-h-screen grid lg:grid-cols-2">
-      <div className=" flex flex-col items-center justify-center p-6 sm:p-12">
-        <div className=" w-full max-w-md space-y-8 ">
+    <div className="min-h-screen grid lg:grid-cols-2">
+      <div className="flex flex-col items-center justify-center p-6 sm:p-12">
+        <div className="w-full max-w-md space-y-8">
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2 group">
               <div
@@ -25,7 +60,7 @@ const Register = () => {
             </div>
           </div>
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div className="form-control">
               <label className="label">
                 <span className="label-text font-medium">Full Name</span>
@@ -35,13 +70,17 @@ const Register = () => {
                   <User className="size-5 text-base-content/40" />
                 </div>
                 <input
+                  {...register("name")}
                   type="text"
                   className={`input input-bordered w-full pl-10`}
                   placeholder="John Doe"
-                  // value={formData.fullName}
-                  // onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 />
               </div>
+              {errors.name && (
+                <label>
+                  <span className="text-red-500">{errors.name.message}</span>
+                </label>
+              )}
             </div>
 
             <div className="form-control">
@@ -53,15 +92,17 @@ const Register = () => {
                   <Mail className="size-5 text-base-content/40" />
                 </div>
                 <input
+                  {...register("email")}
                   type="email"
                   className={`input input-bordered w-full pl-10`}
                   placeholder="you@example.com"
-                  // value={formData.email}
-                  // onChange={(e) =>
-                  //   setFormData({ ...formData, email: e.target.value })
-                  // }
                 />
               </div>
+              {errors.email && (
+                <label>
+                  <span className="text-red-500">{errors.email.message}</span>
+                </label>
+              )}
             </div>
 
             <div className="form-control">
@@ -73,13 +114,10 @@ const Register = () => {
                   <Lock className="size-5 text-base-content/40" />
                 </div>
                 <input
+                  {...register("password")}
                   type={showPassword ? "text" : "password"}
                   className={`input input-bordered w-full pl-10`}
                   placeholder="••••••••"
-                  // value={formData.password}
-                  // onChange={(e) =>
-                  //   setFormData({ ...formData, password: e.target.value })
-                  // }
                 />
                 <button
                   type="button"
@@ -93,6 +131,13 @@ const Register = () => {
                   )}
                 </button>
               </div>
+              {errors.password && (
+                <label className="label">
+                  <span className="font-medium text-red-500">
+                    {errors.password.message}
+                  </span>
+                </label>
+              )}
             </div>
 
             <button type="submit" className="btn btn-primary w-full">
