@@ -1,0 +1,77 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Logs
+logs
+*.log
+logs/**/*.log
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Build output for both frontend and backend
+dist/
+.build/
+out/ # Next.js specific build folder
+
+# TypeScript
+*.tsbuildinfo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE and Editor settings
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Next.js specific
+.next/
+.next/cache/
+
+# TailwindCSS JIT cache
+.tailwind/
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# Test files
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+jest.config.js
+jest.config.ts
+
+# Git-specific
+.git/
+.gitmodules
+
+# Temporary files
+*.tmp
+*.temp
+
+# Frontend-specific
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/.env.local
+frontend/.eslintcache
+
+# Backend-specific
+backend/node_modules/
+backend/dist/
+backend/.env
+backend/.env.local
