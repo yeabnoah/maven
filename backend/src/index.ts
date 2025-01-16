@@ -3,7 +3,9 @@ import cors from "cors";
 import express, { Request, Response } from "express";
 import { auth } from "./lib/auth";
 import userRoute from "./routes/user.route";
+import { config } from "dotenv";
 
+config();
 const app = express();
 const port = 3000;
 

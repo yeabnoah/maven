@@ -3,15 +3,25 @@ import AuthImagePattern from "@/app/components/Pattern";
 import signupSchema from "@/app/validation/signup.schema";
 import { Eye, EyeOff, Lock, Mail, MessageSquare, User } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const router = useRouter();
+  const session = authClient.useSession();
+
+  useEffect(() => {
+    if (!session) {
+      router.push("/dashboard");
+    }
+  }, [session]);
 
   type FormInterface = z.infer<typeof signupSchema>;
 
