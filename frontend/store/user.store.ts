@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 interface UserInterface {
   id: string;
@@ -14,6 +15,7 @@ interface UserInterface {
 type useUserInterface = {
   user: UserInterface;
   fetchUserData: () => Promise<void>;
+  uploadImage: (image: string) => Promise<void>; // Accept Base64 string
   resetUserData: () => void;
   isLoading: boolean;
 };
@@ -30,17 +32,33 @@ const useUserStore = create<useUserInterface>((set) => ({
   },
 
   isLoading: false,
+
   fetchUserData: async () => {
     set({ isLoading: true });
     try {
       const response = await axios.get("http://localhost:3000/user", {
         withCredentials: true,
       });
-      set(() => ({
-        user: response.data,
-      }));
-    } catch {
-      console.log("error");
+      set({ user: response.data });
+    } catch (error) {
+      toast.error("Failed to fetch user data");
+    } finally {
+      set({ isLoading: false });
+    }
+  },
+
+  uploadImage: async (base64Image: string) => {
+    set({ isLoading: true });
+    try {
+      const response = await axios.patch(
+        "http://localhost:3000/user",
+        { image: base64Image },
+        { withCredentials: true }
+      );
+      set({ user: response.data });
+      toast.success("Profile image updated successfully");
+    } catch (error) {
+      toast.error("Failed to update profile image");
     } finally {
       set({ isLoading: false });
     }
