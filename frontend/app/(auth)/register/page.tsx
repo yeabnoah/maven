@@ -1,6 +1,6 @@
 "use client";
 import AuthImagePattern from "@/app/components/Pattern";
-import signupSchema from "@/app/validation/signup.schema";
+import signupSchema from "@/validation/signup.schema";
 import { authClient } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, Lock, Mail, MessageSquare, User } from "lucide-react";
