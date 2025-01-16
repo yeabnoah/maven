@@ -1,12 +1,13 @@
 import { Router } from "express";
+import getUser from "../controllers/get-user.controller";
 import authMiddleware from "../middleware/auth-middleware";
-import getUserInfo from "../controllers/user.controller";
+import editUser from "../controllers/edit-user.controller";
 
 const userRoute = Router();
 
 userRoute.use(authMiddleware);
 
-userRoute.get("/", getUserInfo);
-// userRoute.patch("/");
+userRoute.get("/", getUser);
+userRoute.patch("/", editUser);
 
 export default userRoute;

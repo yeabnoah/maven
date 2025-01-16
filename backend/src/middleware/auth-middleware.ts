@@ -19,6 +19,7 @@ const authMiddleware = async (
     return;
   }
 
+  req.user = session.user;
   next();
 };
 

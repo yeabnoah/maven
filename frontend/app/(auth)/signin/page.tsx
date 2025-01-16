@@ -5,12 +5,19 @@ import toast from "react-hot-toast";
 import { authClient } from "@/lib/auth-client";
 import { Eye, EyeOff, Lock, Mail, MessageSquare } from "lucide-react";
 import AuthImagePattern from "@/app/components/Pattern";
+import { redirect } from "next/navigation";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const session = authClient.useSession();
+
+  if (session.data?.session) {
+    redirect("/dashboard");
+  }
 
   const handleSignIn = async () => {
     setLoading(true);

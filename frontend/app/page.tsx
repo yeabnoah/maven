@@ -1,4 +1,15 @@
+"use client";
+
+import { authClient } from "@/lib/auth-client";
+import { redirect } from "next/navigation";
+
 export default function Home() {
+  const session = authClient.useSession();
+
+  if (session.data?.session) {
+    redirect("/dashboard");
+  }
+
   return (
     <div>
       <div className=" ">
