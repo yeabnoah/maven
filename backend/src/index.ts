@@ -4,14 +4,17 @@ import express, { Request, Response } from "express";
 import { auth } from "./lib/auth";
 import userRoute from "./routes/user.route";
 import { config } from "dotenv";
+import bodyParser from "body-parser";
 
 config();
 const app = express();
 const port = 3000;
 
-app.all("/api/auth/*", toNodeHandler(auth));
 app.use(express.json());
+app.use(bodyParser.json({ limit: "10mb" })); // Adjust size as needed
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
+app.all("/api/auth/*", toNodeHandler(auth));
 app.use("/user", userRoute);
 
 app.get("/", (req: Request, res: Response) => {
