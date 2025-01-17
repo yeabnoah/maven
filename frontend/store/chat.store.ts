@@ -19,10 +19,10 @@ interface useChatInterface {
   isSelectedUserLoading: boolean;
   getUsers: () => Promise<void>;
   getMessages: (receiverId: string) => Promise<void>;
-  setSelectedUser: (user: User) => Promise<void>;
+  setSelectedUser: (user: User | null) => Promise<void>;
 }
 
-const useChatStore = create<useChatInterface>((set) => ({
+const useChatStore = create<useChatInterface>((set, get) => ({
   messages: [],
   selectedUser: null,
   users: [],
@@ -46,17 +46,18 @@ const useChatStore = create<useChatInterface>((set) => ({
   getMessages: async (receiverId: string) => {
     set({ isMessageLoading: true });
     try {
-      const response = await axiosInstance.get(`/messages/${receiverId}`);
-      set({ messages: response.data });
+      const response = await axiosInstance.get(`/message/${receiverId}`);
+      const currentMessages = get().messages;
+      set({ messages: [...currentMessages, response.data.data] });
       toast.success("Messages fetched successfully");
-    } catch (error: unknown) {
-      toast.error(error as string);
+    } catch {
+      toast.error("Error fetching messages");
     } finally {
       set({ isMessageLoading: false });
     }
   },
 
-  setSelectedUser: async (user: User) => {
+  setSelectedUser: async (user: User | null) => {
     set({ isSelectedUserLoading: true });
     try {
       set({ selectedUser: user });

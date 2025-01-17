@@ -19,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        data-theme="halloween"
+        data-theme="garden"
         className={` ${spaceGrotesk.className} antialiased`}
       >
         <Navbar />
