@@ -1,33 +1,44 @@
 "use client";
 
 import useUserStore from "@/store/user.store";
+import axios from "axios";
 import { Camera, Mail, User } from "lucide-react";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const Page = () => {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
   const user = useUserStore((state) => state.user);
   const isLoading = useUserStore((state) => state.isLoading);
   const fetchUserData = useUserStore((state) => state.fetchUserData);
-  const updateUser = useUserStore((state) => state.uploadImage);
+  // const updateUser = useUserStore((state) => state.uploadImage);
 
   useEffect(() => {
-    fetchUserData(); // Fetch user data on component mount
+    fetchUserData();
   }, [fetchUserData]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const reader = new FileReader();
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
 
-    reader.onload = async () => {
-      const base64Image = reader.result as string; // Base64-encoded string
-      setSelectedImg(base64Image); // Update local state for preview
-      await updateUser(base64Image); // Send Base64 string to the backend
-    };
+      const response = await axios.patch(
+        "http://localhost:3000/user",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+        }
+      );
 
-    reader.readAsDataURL(file); // Convert the file to Base64
+      setSelectedImg(response.data.data.image);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+    }
   };
 
   if (isLoading) {

@@ -39,8 +39,10 @@ const useUserStore = create<useUserInterface>((set) => ({
       const response = await axios.get("http://localhost:3000/user", {
         withCredentials: true,
       });
-      set({ user: response.data });
-    } catch (error) {
+      console.log(`%%%%%%%%%%%%%%%%%%%%%%%`);
+      console.log(response.data.data);
+      set({ user: response.data.data });
+    } catch {
       toast.error("Failed to fetch user data");
     } finally {
       set({ isLoading: false });
@@ -55,9 +57,10 @@ const useUserStore = create<useUserInterface>((set) => ({
         { image: base64Image },
         { withCredentials: true }
       );
-      set({ user: response.data });
+      console.log(response.data.data);
+      set({ user: response.data.data });
       toast.success("Profile image updated successfully");
-    } catch (error) {
+    } catch {
       toast.error("Failed to update profile image");
     } finally {
       set({ isLoading: false });
