@@ -1,105 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import axios from "axios";
-import toast from "react-hot-toast";
+import useChatStore from "@/store/chat.store";
+import ChatContainer from "../components/chatContainer";
+import NoChatSelected from "../components/nochatSelected";
+import Sidebar from "../components/sidebar";
 
-const ChatInput = () => {
-  const [message, setMessage] = useState<string>("");
-  const [image, setImage] = useState<File | null>(null);
-
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setImage(event.target.files[0]);
-    }
-  };
-
-  const handleSendMessage = async () => {
-    if (!message && !image) {
-      toast.error("Please provide either a message or an image");
-      return;
-    }
-
-    try {
-      let imageBase64 = null;
-      if (image) {
-        // Convert image to base64
-        const reader = new FileReader();
-        imageBase64 = await new Promise<string>((resolve, reject) => {
-          reader.onload = () => {
-            if (typeof reader.result === "string") {
-              resolve(reader.result);
-            } else {
-              reject(new Error("Failed to convert image to base64"));
-            }
-          };
-          reader.onerror = () => reject(reader.error);
-          reader.readAsDataURL(image);
-        });
-      }
-
-      const payload = {
-        textMessage: message || "",
-        image: imageBase64,
-      };
-
-      const response = await axios.post(
-        `http://localhost:3000/message/send/awygYNh3ocgvMy25T1uygqsdaxPFGgHC`,
-        payload,
-        {
-          withCredentials: true,
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.data) {
-        toast.success("Message sent successfully!");
-        console.log(response.data);
-
-        setMessage("");
-        setImage(null);
-
-        // Clear the file input
-        const fileInput = document.querySelector(
-          'input[type="file"]'
-        ) as HTMLInputElement;
-        if (fileInput) fileInput.value = "";
-      }
-    } catch (error: any) {
-      console.error("Error sending message:", error);
-      const errorMessage =
-        error.response?.data?.message || "Failed to send message.";
-      toast.error(errorMessage);
-    }
-  };
+const HomePage = () => {
+  const { selectedUser } = useChatStore();
 
   return (
-    <div className="p-4 border-t my-44 flex items-center">
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        placeholder="Type a message..."
-        className="flex-1 p-2 border rounded mr-2"
-      />
+    <div className="h-screen bg-base-200">
+      <div className="flex items-center justify-center pt-20 px-4">
+        <div className="bg-base-100 rounded-lg shadow-cl w-full max-w-full h-[calc(100vh-8rem)]">
+          <div className="flex h-full rounded-lg overflow-hidden">
+            <Sidebar />
 
-      <input
-        type="file"
-        accept="image/jpeg, image/png, image/jpg"
-        onChange={handleImageChange}
-        className="mr-2"
-      />
-
-      <button
-        onClick={handleSendMessage}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-      >
-        Send
-      </button>
+            {!selectedUser ? <NoChatSelected /> : <ChatContainer />}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
-
-export default ChatInput;
+export default HomePage;
