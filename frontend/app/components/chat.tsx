@@ -23,7 +23,7 @@ class FileSizeError extends Error {
   }
 }
 
-const MAX_FILE_SIZE_MB = 10; // 10MB max file size before compression
+const MAX_FILE_SIZE_MB = 10;
 
 const ChatInput = () => {
   const [message, setMessage] = useState<string>("");

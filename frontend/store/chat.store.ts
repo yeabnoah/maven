@@ -21,6 +21,7 @@ interface useChatInterface {
   getUsers: () => Promise<void>;
   getMessages: (receiverId: string) => Promise<void>;
   setSelectedUser: (user: User | null) => Promise<void>;
+  sendChat: (textMessage: string) => void;
 }
 
 const useChatStore = create<useChatInterface>((set, get) => ({
@@ -70,6 +71,12 @@ const useChatStore = create<useChatInterface>((set, get) => ({
     } finally {
       set({ isSelectedUserLoading: false });
     }
+  },
+
+  sendChat: (textMessage) => {
+    console.log({
+      textMessage,
+    });
   },
 }));
 
