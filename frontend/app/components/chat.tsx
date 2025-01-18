@@ -59,9 +59,7 @@ const ChatInput = () => {
         validateImage(file);
 
         setImage(file);
-        setMessage(""); // Clear text when image is selected
-
-        // Create preview
+        setMessage("");
         const reader = new FileReader();
         reader.onload = (e) => {
           setImagePreview(e.target?.result as string);
@@ -150,6 +148,7 @@ const ChatInput = () => {
       );
 
       toast.success("Message sent successfully!");
+
       setMessage("");
       setImage(null);
       setImagePreview(null);

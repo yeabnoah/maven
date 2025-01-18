@@ -4,9 +4,10 @@ import toast from "react-hot-toast";
 import { create } from "zustand";
 
 interface messageInterface {
+  id: number;
   senderId: string;
   receiverId: string;
-  textMessage?: string;
+  messageContent?: string;
   image?: string;
 }
 
@@ -47,9 +48,12 @@ const useChatStore = create<useChatInterface>((set, get) => ({
     set({ isMessageLoading: true });
     try {
       const response = await axiosInstance.get(`/message/${receiverId}`);
-      const currentMessages = get().messages;
-      set({ messages: [...currentMessages, response.data.data] });
-      toast.success("Messages fetched successfully");
+      // const currentMessages = get().messages;
+      set({ messages: response.data.data });
+      // toast.success("Messages fetched successfully");
+      console.log("messages -----------------");
+      // console.log(response.data.data);
+      console.log(get().messages);
     } catch {
       toast.error("Error fetching messages");
     } finally {
