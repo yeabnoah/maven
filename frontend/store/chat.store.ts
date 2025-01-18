@@ -12,6 +12,7 @@ interface messageInterface {
 }
 
 interface useChatInterface {
+  isMessageSending: boolean;
   selectedUser: User | null;
   users: User[];
   messages: messageInterface[];
@@ -21,10 +22,11 @@ interface useChatInterface {
   getUsers: () => Promise<void>;
   getMessages: (receiverId: string) => Promise<void>;
   setSelectedUser: (user: User | null) => Promise<void>;
-  sendChat: (textMessage: string) => void;
+  sendChat: (textMessage: string, image?: string) => Promise<void>;
 }
 
 const useChatStore = create<useChatInterface>((set, get) => ({
+  isMessageSending: false,
   messages: [],
   selectedUser: null,
   users: [],
@@ -49,11 +51,8 @@ const useChatStore = create<useChatInterface>((set, get) => ({
     set({ isMessageLoading: true });
     try {
       const response = await axiosInstance.get(`/message/${receiverId}`);
-      // const currentMessages = get().messages;
       set({ messages: response.data.data });
-      // toast.success("Messages fetched successfully");
       console.log("messages -----------------");
-      // console.log(response.data.data);
       console.log(get().messages);
     } catch {
       toast.error("Error fetching messages");
@@ -73,10 +72,23 @@ const useChatStore = create<useChatInterface>((set, get) => ({
     }
   },
 
-  sendChat: (textMessage) => {
-    console.log({
-      textMessage,
-    });
+  sendChat: async (textMessage, image) => {
+    set({ isMessageSending: true });
+    try {
+      const response = await axiosInstance.post(
+        `/message/send/${get().selectedUser?.id}`,
+        {
+          textMessage,
+          image,
+        }
+      );
+      set({ messages: [...get().messages, response.data.newMessage] });
+      console.log(response.data.newMessage);
+      toast.success("message sent successfully");
+    } catch {
+    } finally {
+      set({ isMessageSending: false });
+    }
   },
 }));
 
