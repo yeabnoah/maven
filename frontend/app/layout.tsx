@@ -19,8 +19,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        data-theme="garden"
-        className={` ${spaceGrotesk.className} antialiased`}
+        data-theme="coffee"
+        className={` ${spaceGrotesk.className} antialiased max-h-screen overflow-y-scroll`}
       >
         <Navbar />
         {children}

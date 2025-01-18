@@ -12,7 +12,7 @@ const ChatHeader = () => {
 
   if (isMessageLoading) {
     return (
-      <div className="p-2.5 border-b border-base-300">
+      <div className="p-2.5 mt-[5%] border-b border-base-300">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Avatar */}
@@ -36,7 +36,7 @@ const ChatHeader = () => {
   }
 
   return (
-    <div className="p-2.5 border-b border-base-300">
+    <div className="p-2 mt-[6.5vh] ml-20 lg:ml-0 w-[92.5vw] lg:w-[65vw] fixed  bg-base-100 border-b border-base-300/30">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Avatar */}
