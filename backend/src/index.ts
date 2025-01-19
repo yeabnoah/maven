@@ -22,9 +22,15 @@ app.use("/message", messageRoute);
 
 app.get("/", (req: Request, res: Response) => {
   res.json({
-    message: "hello from maven",
+    message: "hello from maven this is just to check if the app is working and hopefully it works",
   });
 });
+
+app.get("/health", (req : Request, res: Response)=>{
+  res.status(400).json({
+    message : "this is going to be awesome rights"
+  })
+})
 
 app.use(
   cors({

@@ -1,3 +1,5 @@
+// console.log("this is trial for crack bot thius is dsakjbasdf dsfkjlasdbfas")
+
 const AuthImagePattern = ({
   title,
   subtitle,
