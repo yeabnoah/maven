@@ -11,6 +11,7 @@ const ChatHeader = () => {
   }, [selectedUser, getMessages]);
 
   if (isMessageLoading) {
+    console.log("testing user info better performance");
     return (
       <div className="p-2.5 mt-[5%] border-b border-base-300">
         <div className="flex items-center justify-between">
