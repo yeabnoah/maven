@@ -4,15 +4,17 @@ import { Server } from "socket.io";
 
 const app = express();
 const server = createServer(app);
+let messages: string[] = [];
 
 const io = new Server(server);
 
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.on("msg", (msg) => {
-    console.log(msg);
-    io.emit("msg", msg);
+  socket.emit("msg", "welcome bud : this is message from server");
+  socket.on("cli", (message) => {
+    console.log(message);
+    socket.emit("message", message);
   });
 });
 
