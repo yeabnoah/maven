@@ -9,11 +9,17 @@ interface messageInterface {
   receiverId: string;
   messageContent?: string;
   image?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UserWithBio extends User {
+  bio?: string;
 }
 
 interface useChatInterface {
   isMessageSending: boolean;
-  selectedUser: User | null;
+  selectedUser: UserWithBio | null;
   users: User[];
   messages: messageInterface[];
   isMessageLoading: boolean;

@@ -50,7 +50,7 @@ const ChatSendUi = () => {
   };
 
   return (
-    <div className="bg-base-100 shadow-lg w-[85vw] mx-auto lg:mx-0 lg:w-[65%] rounded-lg fixed bottom-0 p-4">
+    <div className="bg-base-100  w-[92.5vw] lg:w-[65vw] shadow-lg flex-1 mx-auto lg:mx-0 rounded-lg fixed bottom-0 p-4">
       {image && (
         <div className="mb-4 flex-col items-end flex">
           <button
