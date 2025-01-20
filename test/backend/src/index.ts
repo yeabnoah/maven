@@ -6,15 +6,29 @@ const app = express();
 const server = createServer(app);
 let messages: string[] = [];
 
-const io = new Server(server);
+const io = new Server(server, {
+  cors: {
+    origin: "*", // Allows all origins (not recommended for production)
+    methods: ["GET", "POST"],
+  },
+});
 
 io.on("connection", (socket) => {
   console.log("A user connected");
 
-  socket.emit("msg", "welcome bud : this is message from server");
+  // Send welcome message when user connects
+  socket.emit("msg", "Welcome bud: This is a message from the server");
+
+  // Handle incoming messages from client
   socket.on("cli", (message) => {
-    console.log(message);
-    socket.emit("message", message);
+    console.log("Received message:", message);
+    messages.push(message);
+    io.emit("message", JSON.stringify(messages)); // Emit updated messages to all clients
+  });
+
+  // Handle disconnect event
+  socket.on("disconnect", () => {
+    console.log("A user disconnected");
   });
 });
 

@@ -3,39 +3,51 @@ import io from "socket.io-client";
 import "./App.css";
 
 const socket = io("http://localhost:3000");
+
 function App() {
-  const [mess, setMess] = useState<string>();
+  const [mess, setMess] = useState<string>("");
   const [chat, setChat] = useState<string[]>([]);
 
   useEffect(() => {
+    // Welcome message from server
     socket.on("msg", (message) => {
       console.log(message);
     });
 
+    // Handle incoming messages
     socket.on("message", (message) => {
-      setChat([...chat, message]);
+      const ms = JSON.parse(message);
+      setChat((prevChat) => [...prevChat, ...ms]); // Append new messages to chat state
     });
-  }, [chat, mess, setChat, setMess]);
+
+    // Cleanup on component unmount
+    return () => {
+      socket.off("msg");
+      socket.off("message");
+    };
+  }, []);
 
   const handleSubmit = () => {
-    socket.emit("cli", mess);
-    console.log(mess);
+    if (mess.trim()) {
+      socket.emit("cli", mess);
+      setMess(""); // Clear input after sending
+    }
   };
 
   return (
     <>
       <div>
         <input
-          onChange={(e) => {
-            setMess(e.target.value);
-          }}
+          value={mess}
+          onChange={(e) => setMess(e.target.value)}
+          placeholder="Type your message..."
         />
-        <button onClick={handleSubmit}>send</button>
+        <button onClick={handleSubmit}>Send</button>
       </div>
-      <div>
-        {chat.map((each, index) => {
-          <h1 key={index}>{each}</h1>;
-        })}
+      <div id="chat" style={{ maxHeight: "300px", overflowY: "auto" }}>
+        {chat.map((each, index) => (
+          <div key={index}>{each}</div>
+        ))}
       </div>
     </>
   );
