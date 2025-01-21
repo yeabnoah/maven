@@ -8,6 +8,7 @@ import { config } from "dotenv";
 import bodyParser from "body-parser";
 import messageRoute from "./routes/message.route";
 import { Server, Socket } from "socket.io";
+import { emit } from "process";
 
 config();
 let counter = 0;
@@ -32,6 +33,13 @@ io.on("connection", (socket: Socket) => {
   counter += 1;
   console.log(`user amount : ${counter}`);
   console.log(userMap);
+
+  socket.on("chatMessage", (message) => {
+    const messageToJSON: { socketId: string; chatMessage: string } =
+      JSON.parse(message);
+
+    // io.emit.t
+  });
 });
 
 app.use(
