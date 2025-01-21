@@ -9,18 +9,15 @@ function App() {
   const [chat, setChat] = useState<string[]>([]);
 
   useEffect(() => {
-    // Welcome message from server
     socket.on("msg", (message) => {
       console.log(message);
     });
 
-    // Handle incoming messages
     socket.on("message", (message) => {
       const ms = JSON.parse(message);
-      setChat((prevChat) => [...prevChat, ...ms]); // Append new messages to chat state
+      setChat((prevChat) => [...prevChat, ...ms]);
     });
 
-    // Cleanup on component unmount
     return () => {
       socket.off("msg");
       socket.off("message");
@@ -30,7 +27,7 @@ function App() {
   const handleSubmit = () => {
     if (mess.trim()) {
       socket.emit("cli", mess);
-      setMess(""); // Clear input after sending
+      setMess("");
     }
   };
 

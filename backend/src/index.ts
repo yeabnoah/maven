@@ -11,7 +11,6 @@ config();
 const app = express();
 const port = 3000;
 
-// CORS middleware should be used before any routes to ensure the headers are added to all requests
 app.use(
   cors({
     origin: "http://localhost:5000", // Adjust with the correct client-side origin
