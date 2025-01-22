@@ -8,43 +8,44 @@ import { config } from "dotenv";
 import bodyParser from "body-parser";
 import messageRoute from "./routes/message.route";
 import { Server, Socket } from "socket.io";
-import { emit } from "process";
 
 config();
 let counter = 0;
-const userMap: { [key: string]: string } = {};
-const port = process.env.PORT as string | 3000;
+export const userMap: { [key: string]: string } = {};
+const port = process.env.PORT || 3000;
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {
+export const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: ["http://localhost:5000", "http://localhost:3000"],
     methods: ["GET", "POST"],
   },
 });
 
 io.on("connection", (socket: Socket) => {
-  console.log(`user connected`);
+  console.log(`New connection attempt, socket ID: ${socket.id}`);
 
-  const userId = socket.handshake.query.userId as string;
-  const socketId = socket.id;
-  userMap[userId] = socketId;
+  const userId = (socket.handshake.query.userId as string) || "unknown_user";
+  console.log(`User connected with ID: ${userId}`);
 
-  // console.log("starting the day with coding")
+  userMap[userId] = socket.id;
+
+  io.emit("getOnlineUsers", Object.keys(userMap));
 
   counter += 1;
-  console.log(`user amount : ${counter}`);
+  console.log(`Connected users: ${counter}`);
   console.log(userMap);
 
-  socket.on("chatMessage", (message) => {
-    const messageToJSON: { socketId: string; chatMessage: string } =
-      JSON.parse(message);
+  socket.on("disconnect", () => {
+    console.log("A user disconnected", socket.id);
+    delete userMap[userId];
+    io.emit("getOnlineUsers", Object.keys(userMap));
   });
 });
 
 app.use(
   cors({
-    origin: "http://localhost:5000",
+    origin: ["http://localhost:5000", "http://localhost:3000"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
@@ -60,16 +61,11 @@ app.use("/user", userRoute);
 app.use("/message", messageRoute);
 
 app.get("/", (req: Request, res: Response) => {
-  res.json({
-    message:
-      "hello from maven this is just to check if the app is working and hopefully it works",
-  });
+  res.json({ message: "Hello from Maven, app is working fine." });
 });
 
 app.get("/health", (req: Request, res: Response) => {
-  res.status(400).json({
-    message: "this is going to be awesome rights",
-  });
+  res.status(200).json({ message: "Server is healthy." });
 });
 
 server.listen(port, () => {

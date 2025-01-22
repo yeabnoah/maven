@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import cloudinary from "../lib/cloudinary";
 import { prisma } from "../lib/prisma.config";
+import { io, userMap } from "..";
+import { getReceiverSocketId } from "../lib/getSocketId";
 
 const sendMessage = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -105,6 +107,11 @@ const sendMessage = async (req: Request, res: Response): Promise<void> => {
     const newMessage = await prisma.message.create({
       data: messageData,
     });
+
+    const receiverSocketId = getReceiverSocketId(receiverId);
+    if (receiverId) {
+      io.to(receiverSocketId).emit("newMessage", newMessage);
+    }
 
     res.status(200).json({
       message: "Message sent successfully",

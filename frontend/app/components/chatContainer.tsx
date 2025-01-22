@@ -5,12 +5,22 @@ import MessageSkeleton from "./messageScheleton";
 import ChatSendUi from "./chatSendUi";
 
 const ChatContainer = () => {
-  const { selectedUser, isMessageLoading, getMessages, messages } =
-    useChatStore();
+  const {
+    selectedUser,
+    isMessageLoading,
+    getMessages,
+    messages,
+    subscribeToMessages,
+    unsubscribeFromMessages,
+  } = useChatStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     getMessages(selectedUser?.id as string);
+
+    subscribeToMessages();
+
+    return () => unsubscribeFromMessages();
   }, [selectedUser, getMessages, selectedUser?.id]);
 
   useEffect(() => {

@@ -2,6 +2,8 @@ import axiosInstance from "@/lib/axios.config";
 import { User } from "better-auth/types";
 import toast from "react-hot-toast";
 import { create } from "zustand";
+import useCheckAuth from "./checkAuth";
+import { Socket } from "socket.io-client";
 
 interface messageInterface {
   id: number;
@@ -29,6 +31,8 @@ interface useChatInterface {
   getMessages: (receiverId: string) => Promise<void>;
   setSelectedUser: (user: User | null) => Promise<void>;
   sendChat: (textMessage: string, image?: string) => Promise<void>;
+  subscribeToMessages: () => void;
+  unsubscribeFromMessages: () => void;
 }
 
 const useChatStore = create<useChatInterface>((set, get) => ({
@@ -95,6 +99,27 @@ const useChatStore = create<useChatInterface>((set, get) => ({
     } finally {
       set({ isMessageSending: false });
     }
+  },
+
+  subscribeToMessages: () => {
+    const selectedUser = get().selectedUser;
+    if (!selectedUser) return;
+    const socket = useCheckAuth.getState().socket as Socket;
+
+    socket.on("newMessage", (newMessage: messageInterface) => {
+      const isMessageSentFromSelectedUser =
+        newMessage.senderId === selectedUser.id;
+      if (!isMessageSentFromSelectedUser) return;
+
+      set({
+        messages: [...get().messages, newMessage],
+      });
+    });
+  },
+
+  unsubscribeFromMessages: () => {
+    const socket = useCheckAuth.getState().socket as Socket;
+    socket.off("newMessage");
   },
 }));
 

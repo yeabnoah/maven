@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 export default function Home() {
   const session = authClient.useSession();
 
-  if (session.data?.session) {
+  if (session.data?.user) {
     redirect("/dashboard");
   }
 
