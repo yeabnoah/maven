@@ -30,6 +30,8 @@ io.on("connection", (socket: Socket) => {
   const socketId = socket.id;
   userMap[userId] = socketId;
 
+  // console.log("starting the day with coding")
+
   counter += 1;
   console.log(`user amount : ${counter}`);
   console.log(userMap);
@@ -37,8 +39,6 @@ io.on("connection", (socket: Socket) => {
   socket.on("chatMessage", (message) => {
     const messageToJSON: { socketId: string; chatMessage: string } =
       JSON.parse(message);
-
-    // io.emit.t
   });
 });
 
