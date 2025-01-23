@@ -22,7 +22,7 @@ export default function SignIn() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center rounded-md bg-white text-black backdrop-blur-2xl bg-white/8 ">
+    <div className=" min-h-screen flex items-center justify-center rounded-md bg-white text-black backdrop-blur-2xl bg-white/8 ">
       <Image
         src="/bg3.avif"
         className="absolute inset-0 w-full h-full object-cover p-2 rounded-xl"
@@ -31,9 +31,9 @@ export default function SignIn() {
         priority
       />
 
-      <div className=" relative flex justify-between items-center backdrop-blur-3xl w-[99vw] mx-auto my-auto h-[98vh] p-10 rounded-md">
-        <div className="space-y-8 flex justify-center items-center min-h-[98vh] bg-white ">
-          <div className="space-y-6 p-8 w-[30vw] bg-white rounded-none ">
+      <div className=" relative flex justify-evenly  items-center backdrop-blur-3xl w-[99vw] mx-auto my-auto h-[98vh] p-10 rounded-md">
+        <div className="space-y-8 flex justify-center items-center min-h-screen">
+          <div className="space-y-6 p-8 w-96 bg-white rounded-none ">
             <div className="space-y-6">
               <div className="space-y-3">
                 <Label
@@ -71,7 +71,7 @@ export default function SignIn() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 rounded-none -translate-y-1/2 text-gray-500 hover:text-indigo-600"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-indigo-600"
                   >
                     {showPassword ? (
                       <EyeOff className="h-5 w-5" />
@@ -84,7 +84,7 @@ export default function SignIn() {
             </div>
 
             <Button
-              className="w-full py-3 rounded-none text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300"
+              className="w-full py-3 rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300"
               onClick={handleSignIn}
               disabled={loading}
             >
@@ -99,7 +99,7 @@ export default function SignIn() {
             </div>
 
             <Button
-              className="w-full py-3 rounded-none bg-white  border-gray-300 text-gray-700 flex items-center justify-center gap-2 hover:bg-gray-100 transition-all duration-300"
+              className="w-full py-3 rounded-md bg-white border border-gray-300 text-gray-700 flex items-center justify-center gap-2 hover:bg-gray-100 transition-all duration-300"
               onClick={() => {}}
             >
               <FaGoogle />
