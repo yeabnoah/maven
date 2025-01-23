@@ -2,16 +2,25 @@
 
 import useChatStore from "@/store/chat.store";
 import { Users } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import SidebarSkeleton from "./sidebarScheleton";
+import useCheckAuth from "@/store/checkAuth";
 
 const Sidebar = () => {
   const { getUsers, users, isUsersLoading, setSelectedUser, selectedUser } =
     useChatStore();
 
+  const { onlineUsers } = useCheckAuth();
+
+  const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+
   useEffect(() => {
     getUsers();
   }, [getUsers]);
+
+  const filteredUsers = showOnlineOnly
+    ? users.filter((user) => onlineUsers.includes(user.id))
+    : users;
 
   if (!isUsersLoading && users.length === 0) {
     return <SidebarSkeleton />;
@@ -29,20 +38,20 @@ const Sidebar = () => {
             <label className="cursor-pointer flex items-center gap-2">
               <input
                 type="checkbox"
-                // checked={showOnlineOnly}
-                // onChange={(e) => setShowOnlineOnly(e.target.checked)}
+                checked={showOnlineOnly}
+                onChange={(e) => setShowOnlineOnly(e.target.checked)}
                 className="checkbox checkbox-sm"
               />
               <span className="text-sm">Show online only</span>
             </label>
             <span className="text-xs text-zinc-500">
-              {/* ({onlineUsers.length - 1} online) */}
+              ({onlineUsers.length - 1} online)
             </span>
           </div>
         </div>
 
         <div className="overflow-y-auto w-full py-3 pl-2">
-          {users.map((user) => (
+          {filteredUsers.map((user) => (
             <button
               key={user.id}
               onClick={() => setSelectedUser(user)}
@@ -62,6 +71,13 @@ const Sidebar = () => {
                   alt={user.name}
                   className="size-12 object-cover rounded-full"
                 />
+
+                {onlineUsers.includes(user.id) && (
+                  <span
+                    className="absolute bottom-0 right-0 size-3 bg-green-500 
+                  rounded-full ring-2 ring-zinc-900"
+                  />
+                )}
               </div>
 
               <div className="hidden lg:block text-left min-w-0">
@@ -70,7 +86,7 @@ const Sidebar = () => {
             </button>
           ))}
 
-          {users.length === 0 && (
+          {filteredUsers.length === 0 && (
             <div className="text-center text-zinc-500 py-4">
               No online users
             </div>

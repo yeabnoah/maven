@@ -3,6 +3,7 @@ import { useEffect, useRef } from "react";
 import ChatHeader from "./chatHeader";
 import MessageSkeleton from "./messageScheleton";
 import ChatSendUi from "./chatSendUi";
+import { formatMessageTime } from "@/lib/time";
 
 const ChatContainer = () => {
   const {
@@ -59,7 +60,7 @@ const ChatContainer = () => {
                     isSentByMe ? "rounded-tl-none" : "rounded-tr-none"
                   } shadow-sm`}
                 >
-                  <p>{message?.createdAt}</p>
+                  <p>{formatMessageTime(message?.createdAt)}</p>
                   {message.messageContent && (
                     <p className="text-sm sm:text-base text-wrap max-w-[50vw]">
                       {message.messageContent}

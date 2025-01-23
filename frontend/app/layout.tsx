@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Toaster } from "react-hot-toast";
-import Navbar from "./components/navbar";
+// import Navbar from "./components/navbar";
 import "./globals.css";
 import { Space_Grotesk } from "next/font/google";
 
@@ -20,9 +20,9 @@ export default function RootLayout({
     <html lang="en">
       <body
         data-theme="coffee"
-        className={` ${spaceGrotesk.className} antialiased max-h-screen overflow-y-scroll`}
+        className={` ${spaceGrotesk.className} antialiased max-h-screen overflow-y-scroll bg-white`}
       >
-        <Navbar />
+        {/* <Navbar /> */}
         {children}
         <Toaster />
       </body>

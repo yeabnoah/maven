@@ -1,13 +1,29 @@
-import { MessageSquare, Settings } from "lucide-react";
+"use client";
+import { authClient } from "@/lib/auth-client";
+import { LogOut, MessageSquare, Settings, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const Navbar = () => {
-  //   const { logout, authUser } = useAuthStore();
+  const router = useRouter();
+  const session = authClient.useSession();
+  const logout = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("successfully logged out.");
+          router.push("/signin");
+        },
+        onError: () => {
+          toast.error("error occurred while logging out.");
+        },
+      },
+    });
+  };
 
   return (
-    <header
-      className=" border-b border-base-300 fixed w-full top-0 z-40 bg-base-100"
-    >
+    <header className=" border-b border-base-300 fixed w-full top-0 z-40 bg-base-100">
       <div className="container mx-auto px-4 h-16">
         <div className="flex items-center justify-between h-full">
           <div className="flex items-center gap-8">
@@ -34,9 +50,9 @@ const Navbar = () => {
               <span className="hidden sm:inline">Settings</span>
             </Link>
 
-            {/* {authUser && (
+            {session.data?.session && (
               <>
-                <Link to={"/profile"} className={`btn btn-sm gap-2`}>
+                <Link href={"/profile"} className={`btn btn-sm gap-2`}>
                   <User className="size-5" />
                   <span className="hidden sm:inline">Profile</span>
                 </Link>
@@ -46,7 +62,7 @@ const Navbar = () => {
                   <span className="hidden sm:inline">Logout</span>
                 </button>
               </>
-            )} */}
+            )}
           </div>
         </div>
       </div>

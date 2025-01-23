@@ -1,142 +1,134 @@
 "use client";
+
 import { useState } from "react";
 import Link from "next/link";
-import toast from "react-hot-toast";
-import { authClient } from "@/lib/auth-client";
-import { Eye, EyeOff, Lock, Mail, MessageSquare } from "lucide-react";
-import AuthImagePattern from "@/app/components/Pattern";
-import { redirect } from "next/navigation";
+import { Eye, EyeOff } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { FaGoogle } from "react-icons/fa";
+import Image from "next/image";
 
-const SignIn = () => {
+export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const session = authClient.useSession();
-
-  if (session.data?.session) {
-    redirect("/dashboard");
-  }
-
   const handleSignIn = async () => {
     setLoading(true);
-    try {
-      await authClient.signIn.email(
-        { email, password },
-        {
-          onRequest: () => {
-            console.log("Signing in...");
-          },
-          onSuccess: () => {
-            toast.success("Signed in successfully!");
-            // Redirect to dashboard or other actions
-          },
-          onError: (ctx) => {
-            toast.error(ctx.error.message || "Error occurred during sign-in.");
-          },
-        }
-      );
-    } catch (error) {
-      toast.error("Unexpected error occurred. Please try again.");
-      console.error("Sign-in error:", error);
-    } finally {
-      setLoading(false);
-    }
+    // Your sign in logic here
+    setLoading(false);
   };
 
   return (
-    <div className="min-h-screen grid lg:grid-cols-2">
-      <div className="flex flex-col items-center justify-center p-6 sm:p-12">
-        <div className="w-full max-w-md space-y-8">
-          <div className="text-center mb-8">
-            <div className="flex flex-col items-center gap-2 group">
-              <div
-                className="size-12 rounded-xl bg-primary/10 flex items-center justify-center 
-                group-hover:bg-primary/20 transition-colors"
-              >
-                <MessageSquare className="size-6 text-primary" />
-              </div>
-              <h1 className="text-2xl font-bold mt-2">Sign In</h1>
-              <p className="text-base-content/60">Sign In to your Account</p>
-            </div>
-          </div>
+    <div className="relative min-h-screen flex items-center justify-center rounded-md bg-white text-black backdrop-blur-2xl bg-white/8 ">
+      <Image
+        src="/bg3.avif"
+        className="absolute inset-0 w-full h-full object-cover p-2 rounded-xl"
+        alt="computer"
+        layout="fill"
+        priority
+      />
 
-          <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Email</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="size-5 text-base-content/40" />
-                </div>
-                <input
+      <div className=" relative flex justify-between items-center backdrop-blur-3xl w-[99vw] mx-auto my-auto h-[98vh] p-10 rounded-md">
+        <div className="space-y-8 flex justify-center items-center min-h-[98vh] bg-white ">
+          <div className="space-y-6 p-8 w-[30vw] bg-white rounded-none ">
+            <div className="space-y-6">
+              <div className="space-y-3">
+                <Label
+                  htmlFor="email"
+                  className="text-sm text-gray-700 font-medium"
+                >
+                  Email
+                </Label>
+                <Input
+                  id="email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="input input-bordered w-full pl-10"
+                  className="w-full py-3 border border-gray-300 rounded-none text-gray-700 focus:ring-2 focus:ring-indigo-500 placeholder-gray-400"
                   placeholder="you@example.com"
                 />
               </div>
-            </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text font-medium">Password</span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="size-5 text-base-content/40" />
-                </div>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="input input-bordered w-full pl-10"
-                  placeholder="••••••••"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
+              <div className="space-y-3">
+                <Label
+                  htmlFor="password"
+                  className="text-sm text-gray-700 font-medium"
                 >
-                  {showPassword ? (
-                    <EyeOff className="size-5 text-base-content/40" />
-                  ) : (
-                    <Eye className="size-5 text-base-content/40" />
-                  )}
-                </button>
+                  Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="w-full py-3 border border-gray-300 rounded-none text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-indigo-500"
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 rounded-none -translate-y-1/2 text-gray-500 hover:text-indigo-600"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
-            <button
+            <Button
+              className="w-full py-3 rounded-none text-white bg-indigo-600 hover:bg-indigo-700 transition-all duration-300"
               onClick={handleSignIn}
-              type="submit"
-              className={`btn btn-primary w-full ${loading ? "loading" : ""}`}
               disabled={loading}
             >
-              {loading ? "Signing In..." : "Sign In"}
-            </button>
+              {loading ? "Signing in..." : "Log in"}
+            </Button>
 
-            <div className="text-center">
-              <p className="text-base-content/60">
-                Don&apos;t have an account?{" "}
-                <Link href="/register" className="link link-primary">
-                  Sign up
-                </Link>
-              </p>
+            <div className="flex items-center justify-center">
+              <span className="w-full border-t border-gray-300"></span>
+              <span className="absolute px-2 text-gray-400 bg-white text-xs uppercase">
+                Or
+              </span>
             </div>
-          </form>
+
+            <Button
+              className="w-full py-3 rounded-none bg-white  border-gray-300 text-gray-700 flex items-center justify-center gap-2 hover:bg-gray-100 transition-all duration-300"
+              onClick={() => {}}
+            >
+              <FaGoogle />
+              Log in with Google
+            </Button>
+
+            <p className="text-center text-sm text-gray-600">
+              Don&apos;t have an account?{" "}
+              <Link
+                href="/register"
+                className="text-indigo-600 font-medium hover:underline"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        <div className=" text-center">
+          <div className="space-y-2 text-center">
+            <h1 className="text-5xl font-bold text-white tracking-tight text-center">
+              Welcome!
+            </h1>
+            <p className="text-xl text-white">
+              Log in to Maven to continue to the Chat.
+            </p>
+          </div>
         </div>
       </div>
-
-      <AuthImagePattern
-        title="Join our community"
-        subtitle="Connect with friends, share moments, and stay in touch with your loved ones."
-      />
     </div>
   );
-};
-
-export default SignIn;
+}
