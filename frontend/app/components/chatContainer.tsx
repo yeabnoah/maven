@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import ChatHeader from "./chatHeader";
 import ChatSendUi from "./chatSendUi";
 import MessageSkeleton from "./messageScheleton";
+import { authClient } from "@/lib/auth-client";
 
 interface Message {
   id: number;
@@ -16,6 +17,9 @@ interface Message {
 }
 
 const ChatContainer = () => {
+  const { data: session } = authClient.useSession();
+  const currentUserImage = session?.user?.image;
+
   const {
     selectedUser,
     isMessageLoading,
@@ -73,8 +77,16 @@ const ChatContainer = () => {
               <div className="flex-shrink-0">
                 <div className="w-10 h-10 rounded-full bg-gray-200 overflow-hidden">
                   <img
-                    src={selectedUser?.image || "/placeholder.jpg"}
-                    alt={selectedUser?.name || "User"}
+                    src={
+                      message.senderId === selectedUser?.id
+                        ? selectedUser?.image || "/placeholder.jpg"
+                        : currentUserImage || "/placeholder.jpg"
+                    }
+                    alt={
+                      message.senderId === selectedUser?.id
+                        ? selectedUser?.name || "User"
+                        : "You"
+                    }
                     className="w-full h-full object-cover"
                   />
                 </div>
