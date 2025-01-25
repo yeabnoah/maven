@@ -20,7 +20,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         data-theme="coffee"
-        className={` ${spaceGrotesk.className} antialiased max-h-screen overflow-y-scroll bg-white`}
+        className={` ${spaceGrotesk.className} overflow-x-hidden antialiased max-h-screen overflow-y-scroll bg-white`}
       >
         {/* <Navbar /> */}
         {children}
