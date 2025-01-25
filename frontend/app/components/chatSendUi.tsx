@@ -4,13 +4,14 @@ import useChatStore from "@/store/chat.store";
 import { ChangeEvent, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { Image as ImageIcon, Send } from "lucide-react";
 
 interface formInterface {
   name: string;
 }
 
 const ChatSendUi = () => {
-  const { register, handleSubmit } = useForm<formInterface>();
+  const { register, handleSubmit, reset } = useForm<formInterface>();
   const { sendChat } = useChatStore();
   const [image, setImage] = useState<string | null>(null);
 
@@ -26,6 +27,7 @@ const ChatSendUi = () => {
     } else {
       await sendChat(data.name);
     }
+    reset();
   };
 
   const handleImageStuff = (e: ChangeEvent<HTMLInputElement>) => {
@@ -50,41 +52,44 @@ const ChatSendUi = () => {
   };
 
   return (
-    <div className="  w-[92.5vw] lg:w-[65vw] shadow-lg flex-1 mx-auto lg:mx-0 rounded-lg fixed bottom-0 p-4">
+    <div className="w-full bg-white rounded-xl">
       {image && (
-        <div className="mb-4 flex-col items-end flex">
+        <div className="mb-4 flex flex-col items-end">
           <button
             onClick={cancelImage}
-            className=" bg-error text-white text-sm px-2 py-1 rounded-lg hover:bg-error-focus"
+            className="bg-red-500 hover:bg-red-600 text-white text-sm px-3 py-1.5 rounded-lg transition-colors"
           >
             Cancel
           </button>
           <img
             src={image}
             alt="Preview"
-            className=" max-h-60 object-contain rounded-lg border border-base-300"
+            className="max-h-60 object-contain rounded-lg border border-gray-200 mt-2"
           />
         </div>
       )}
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="flex items-center gap-3 border-t border-base-300 pt-4"
+        className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl"
       >
-        <label className="flex items-center justify-center w-10 h-10 text-base-content rounded-full cursor-pointer">
-          <input type="file" className="hidden" onChange={handleImageStuff} />
-          📎
+        <label className="flex items-center justify-center w-10 h-10 text-gray-500 hover:text-gray-600 rounded-full cursor-pointer transition-colors">
+          <input type="file" className="hidden" onChange={handleImageStuff} accept="image/*" />
+          <ImageIcon size={20} />
         </label>
 
         <input
           {...register("name")}
           type="text"
           placeholder="Type your message..."
-          className="flex-1 input input-bordered input-sm focus:outline-none"
+          className="flex-1 bg-transparent text-sm text-gray-700 placeholder-gray-400 focus:outline-none"
         />
 
-        <button type="submit" className="btn btn-primary btn-sm">
-          Send
+        <button
+          type="submit"
+          className="flex items-center justify-center w-10 h-10 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white rounded-full transition-colors"
+        >
+          <Send size={18} />
         </button>
       </form>
     </div>

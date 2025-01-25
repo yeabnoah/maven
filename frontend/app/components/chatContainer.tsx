@@ -1,9 +1,9 @@
+import { formatMessageTime } from "@/lib/time";
 import useChatStore from "@/store/chat.store";
 import { useEffect, useRef } from "react";
 import ChatHeader from "./chatHeader";
-import MessageSkeleton from "./messageScheleton";
 import ChatSendUi from "./chatSendUi";
-import { formatMessageTime } from "@/lib/time";
+import MessageSkeleton from "./messageScheleton";
 
 const ChatContainer = () => {
   const {
@@ -18,9 +18,7 @@ const ChatContainer = () => {
 
   useEffect(() => {
     getMessages(selectedUser?.id as string);
-
     subscribeToMessages();
-
     return () => unsubscribeFromMessages();
   }, [selectedUser, getMessages, selectedUser?.id]);
 
@@ -30,7 +28,7 @@ const ChatContainer = () => {
 
   if (isMessageLoading) {
     return (
-      <div className="flex-1 flex flex-col ">
+      <div className="flex flex-col h-full">
         <ChatHeader />
         <MessageSkeleton />
       </div>
@@ -38,44 +36,45 @@ const ChatContainer = () => {
   }
 
   return (
-    <div className="flex flex-1 overflow-y-scroll flex-col ">
+    <div className="flex flex-col h-full">
       <ChatHeader />
-      <div className="flex-1 min-h-screen overflow-y-auto px-2 sm:px-4 ">
-        <div className="flex flex-col space-y-3 mx-auto lg:w-full pt-32 pb-24 ">
+      <div className="flex-1 overflow-y-auto">
+        <div className="flex flex-col space-y-4 p-4 md:p-6">
           {messages.map((message) => {
             const isSentByMe = message.senderId === selectedUser?.id;
             return (
               <div
                 key={message.id}
-                className={`flex ${
-                  isSentByMe ? "justify-start" : "justify-end"
-                } animate-fade-in`}
+                className={`flex ${isSentByMe ? "justify-start" : "justify-end"
+                  } animate-fade-in`}
               >
                 <div
-                  className={`max-w-[85%] sm:max-w-[70%] break-words ${
-                    isSentByMe
-                      ? "bg-gray-200 text-gray-800"
-                      : "bg-primary text-white"
-                  } px-3 py-2 sm:px-4 sm:py-2.5 rounded-2xl ${
-                    isSentByMe ? "rounded-tl-none" : "rounded-tr-none"
-                  } shadow-sm`}
+                  className={`max-w-[70%] break-words ${isSentByMe
+                    ? "bg-gray-100 text-gray-800"
+                    : "bg-[#8B5CF6] text-white"
+                    } px-4 py-3 rounded-2xl ${isSentByMe ? "rounded-tl-none" : "rounded-tr-none"
+                    } shadow-sm`}
                 >
-                  <p>{formatMessageTime(message?.createdAt)}</p>
-                  {message.messageContent && (
-                    <p className="text-sm sm:text-base text-wrap max-w-[50vw]">
-                      {message.messageContent}
+                  <div className="flex flex-col gap-1">
+                    {message.messageContent && (
+                      <p className="text-sm leading-relaxed">
+                        {message.messageContent}
+                      </p>
+                    )}
+                    {message.image && (
+                      <div className="mt-2">
+                        <img
+                          src={message.image}
+                          alt="Message attachment"
+                          className="max-w-full rounded-lg object-contain max-h-[300px]"
+                          loading="lazy"
+                        />
+                      </div>
+                    )}
+                    <p className="text-xs opacity-70 mt-1">
+                      {formatMessageTime(message?.createdAt)}
                     </p>
-                  )}
-                  {message.image && (
-                    <div className="mt-2">
-                      <img
-                        src={message.image}
-                        alt="Message attachment"
-                        className="max-w-full rounded-lg object-contain max-h-[200px] sm:max-h-[300px]"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
             );
@@ -83,7 +82,7 @@ const ChatContainer = () => {
           <div ref={messagesEndRef} />
         </div>
       </div>
-      <div className=" ml-20 lg:ml-0 flex-1 w-full">
+      <div className="p-4 border-t border-gray-100">
         <ChatSendUi />
       </div>
     </div>

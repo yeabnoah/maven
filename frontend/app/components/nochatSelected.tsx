@@ -2,7 +2,7 @@ import { UserRoundCogIcon } from "lucide-react";
 
 const NoChatSelected = () => {
   return (
-    <div className="w-full min-h-screen lg:h-full flex-1 my-auto flex flex-col items-center justify-center p-16 lg:py-16 pr-0 lg:pl-20 ">
+    <div className="w-full flex-1 min-h-screen lg:h-full my-auto flex flex-col items-center justify-center p-16 lg:py-16 pr-0 lg:pl-20 ">
       <div className="text-center space-y-6">
         {/* Icon Display */}
         <div className="flex justify-center gap-4 mb-4">
