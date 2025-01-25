@@ -1,126 +1,158 @@
 "use client";
 
-import useUserStore from "@/store/user.store";
-import axios from "axios";
-import { Camera, Mail, User } from "lucide-react";
+import { authClient } from "@/lib/auth-client";
+import { Camera, Moon, Sun, User } from "lucide-react";
+import { useTheme } from "next-themes";
+import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
-const Page = () => {
-  const [selectedImg, setSelectedImg] = useState<string | null>(null);
-  const user = useUserStore((state) => state.user);
-  const isLoading = useUserStore((state) => state.isLoading);
-  const fetchUserData = useUserStore((state) => state.fetchUserData);
-  // const updateUser = useUserStore((state) => state.uploadImage);
+const ProfilePage = () => {
+  const session = authClient.useSession();
+  const [isUploading, setIsUploading] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
+    setMounted(true);
+  }, []);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // if (!session.data?.user) {
+  //   redirect("/signin");
+  // }
 
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) return;
+
+    const file = e.target.files[0];
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+
+    setIsUploading(true);
     try {
       const formData = new FormData();
-      formData.append("image", file);
+      formData.append("avatar", file);
 
-      const response = await axios.patch(
-        "http://localhost:3000/user",
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-          withCredentials: true,
-        }
-      );
+      const response = await fetch("/api/user/avatar", {
+        method: "POST",
+        body: formData,
+      });
 
-      setSelectedImg(response.data.data.image);
+      if (!response.ok) {
+        throw new Error("Failed to update avatar");
+      }
+
+      toast.success("Profile picture updated successfully");
     } catch (error) {
-      console.error("Error uploading image:", error);
-      toast.error("Failed to upload image");
+      toast.error("Failed to update profile picture");
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (!mounted) {
+    return null;
   }
 
   return (
-    <div className="h-screen pt-20">
-      <div className="max-w-2xl mx-auto p-4 py-8">
-        <div className="bg-base-300 rounded-xl p-6 space-y-8">
-          <div className="text-center">
-            <h1 className="text-2xl font-semibold">Profile</h1>
-            <p className="mt-2">Your profile information</p>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm">
+          {/* Header */}
+          <div className="p-6 border-b border-gray-100 dark:border-gray-700">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Profile Settings</h1>
+            <p className="text-gray-500 dark:text-gray-400">Manage your profile and preferences</p>
           </div>
 
-          <div className="flex flex-col items-center gap-4">
-            <div className="relative">
-              <img
-                src={selectedImg || user.image || "/user-placeholder.png"}
-                alt="Profile"
-                className="w-32 h-32 rounded-full object-cover border-4"
-              />
-              <label
-                htmlFor="avatar-upload"
-                className={`
-                  absolute bottom-0 right-0 
-                  bg-base-content hover:scale-105
-                  p-2 rounded-full cursor-pointer 
-                  transition-all duration-200
-                  ${isLoading ? "animate-pulse pointer-events-none" : ""}
-                `}
-              >
-                <Camera className="w-5 h-5 text-base-200" />
-                <input
-                  type="file"
-                  id="avatar-upload"
-                  className="hidden"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  disabled={isLoading}
-                />
-              </label>
-            </div>
-            <p className="text-sm text-zinc-400">
-              {isLoading
-                ? "Uploading..."
-                : "Click the camera icon to update your photo"}
-            </p>
-          </div>
-
-          <div className="space-y-6">
-            <div className="space-y-1.5">
-              <div className="text-sm text-zinc-400 flex items-center gap-2">
-                <User className="w-4 h-4" />
-                Full Name
+          {/* Content */}
+          <div className="p-6 space-y-8">
+            {/* Avatar Section */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Picture</h2>
+              <div className="flex items-center gap-6">
+                <div className="relative group">
+                  <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 dark:bg-gray-700">
+                    {session?.data?.user.image ? (
+                      <img
+                        src={session?.data.user.image}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <User className="w-12 h-12 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <label className="absolute bottom-0 right-0 p-2 bg-indigo-600 rounded-full text-white cursor-pointer hover:bg-indigo-700 transition-colors">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                      disabled={isUploading}
+                    />
+                    <Camera className="w-4 h-4" />
+                  </label>
+                </div>
+                <div>
+                  <h3 className="font-medium text-gray-900 dark:text-white">{session?.data?.user.name}</h3>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">{session?.data?.user.email}</p>
+                </div>
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
-                {user?.name || "N/A"}
-              </p>
             </div>
 
-            <div className="space-y-1.5">
-              <div className="text-sm text-zinc-400 flex items-center gap-2">
-                <Mail className="w-4 h-4" />
-                Email Address
+            {/* Theme Section */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Appearance</h2>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setTheme("light")}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${theme === "light"
+                    ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+                    }`}
+                >
+                  <Sun className="w-5 h-5" />
+                  <span>Light</span>
+                </button>
+                <button
+                  onClick={() => setTheme("dark")}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${theme === "dark"
+                    ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-500/20 dark:text-indigo-400"
+                    : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
+                    }`}
+                >
+                  <Moon className="w-5 h-5" />
+                  <span>Dark</span>
+                </button>
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">
-                {user?.email || "N/A"}
-              </p>
             </div>
-          </div>
 
-          <div className="mt-6 bg-base-300 rounded-xl p-6">
-            <h2 className="text-lg font-medium mb-4">Account Information</h2>
-            <div className="space-y-3 text-sm">
-              <div className="flex items-center justify-between py-2 border-b border-zinc-700">
-                <span>Member Since</span>
-                <span>{new Date(user.createdAt).toLocaleDateString()}</span>
-              </div>
-              <div className="flex items-center justify-between py-2">
-                <span>Account Status</span>
-                <span className="text-green-500">Active</span>
+            {/* Account Info */}
+            <div className="space-y-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Account Information</h2>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Name</label>
+                  <input
+                    type="text"
+                    value={session?.data?.user.name || ""}
+                    readOnly
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+                  <input
+                    type="email"
+                    value={session?.data?.user.email || ""}
+                    readOnly
+                    className="w-full px-3 py-2 border border-gray-200 rounded-lg bg-gray-50 text-gray-600 dark:border-gray-600 dark:bg-gray-700/50 dark:text-gray-300"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -130,4 +162,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default ProfilePage;

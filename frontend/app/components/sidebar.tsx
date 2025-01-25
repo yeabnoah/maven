@@ -1,99 +1,189 @@
 "use client";
 
 import useChatStore from "@/store/chat.store";
-import { Users } from "lucide-react";
+import { LogOut, Moon, Search, Settings, Sun, User, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import SidebarSkeleton from "./sidebarScheleton";
 import useCheckAuth from "@/store/checkAuth";
+import { useTheme } from "next-themes";
+import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 const Sidebar = () => {
   const { getUsers, users, isUsersLoading, setSelectedUser, selectedUser } =
     useChatStore();
-
   const { onlineUsers } = useCheckAuth();
-
   const [showOnlineOnly, setShowOnlineOnly] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const { theme, setTheme } = useTheme();
+  const session = authClient.useSession();
 
   useEffect(() => {
     getUsers();
   }, [getUsers]);
 
-  const filteredUsers = showOnlineOnly
-    ? users.filter((user) => onlineUsers.includes(user.id))
-    : users;
+  const filteredUsers = users
+    .filter((user) => (showOnlineOnly ? onlineUsers.includes(user.id) : true))
+    .filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        user.email.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+  const handleLogout = async () => {
+    await authClient.signOut();
+  };
 
   if (!isUsersLoading && users.length === 0) {
     return <SidebarSkeleton />;
   }
-  //
+
   return (
-    <div>
-      <aside className="w-20 bg-main border-r border-r-main min-h-screen lg:w-72 flex flex-col transition-all duration-200">
-        <div className="border-b border-base-300 w-full p-4">
+    <aside className="h-full bg-white dark:bg-gray-800 flex flex-col">
+      {/* Header */}
+      <div className="p-4 border-b border-gray-100 dark:border-gray-700">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <Users className="size-6" color="white" />
-            <span className="font-medium hidden lg:block text-white">
-              Contacts
-            </span>
+            <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg flex items-center justify-center">
+              <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+            </div>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Contacts</h2>
           </div>
-          <div className="mt-3 hidden lg:flex items-center gap-2">
-            <label className="cursor-pointer flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={showOnlineOnly}
-                onChange={(e) => setShowOnlineOnly(e.target.checked)}
-                className=" checkbox-accent bg-white checkbox-sm"
-              />
-              <span className="text-sm text-white">Show online only</span>
-            </label>
-            <span className="text-xs text-white">
-              ({onlineUsers.length - 1} online)
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
+              {onlineUsers.length - 1} online
             </span>
           </div>
         </div>
 
-        <div className="overflow-y-auto w-full py-3 pl-2">
+        {/* Search */}
+        <div className="relative">
+          <Search className="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search contacts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 rounded-lg text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400"
+          />
+        </div>
+
+        {/* Filter */}
+        <div className="mt-3 flex items-center gap-2">
+          <button
+            onClick={() => setShowOnlineOnly(!showOnlineOnly)}
+            className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${showOnlineOnly ? "bg-indigo-600" : "bg-gray-200 dark:bg-gray-600"
+              }`}
+          >
+            <span
+              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${showOnlineOnly ? "translate-x-4" : "translate-x-0"
+                }`}
+            />
+          </button>
+          <span className="text-sm text-gray-600 dark:text-gray-300">Show online only</span>
+        </div>
+      </div>
+
+      {/* Contact List */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="py-2">
           {filteredUsers.map((user) => (
             <button
               key={user.id}
               onClick={() => setSelectedUser(user)}
-              className={`
-              w-full p-3 flex items-center gap-5
-              hover:bg-base-300 transition-colors
-              ${
-                selectedUser?.id === user.id
-                  ? "bg-base-300 ring-1 ring-base-300"
-                  : ""
-              }
-            `}
+              className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${selectedUser?.id === user.id
+                ? "bg-indigo-50 dark:bg-indigo-500/10"
+                : ""
+                }`}
             >
-              <div className="relative mx-auto lg:mx-0">
-                <img
-                  src={user.image || "/user-placeholder.png"}
-                  alt={user.name}
-                  className="size-12 object-cover rounded-full"
-                />
-
+              <div className="relative flex-shrink-0">
+                <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                  {user.image ? (
+                    <img
+                      src={user.image}
+                      alt={user.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <User className="w-6 h-6 text-gray-400" />
+                    </div>
+                  )}
+                </div>
                 {onlineUsers.includes(user.id) && (
-                  <span
-                    className="absolute bottom-0 right-0 size-3 bg-green-500 
-                  rounded-full ring-2 ring-zinc-900"
-                  />
+                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full ring-2 ring-white dark:ring-gray-800" />
                 )}
               </div>
 
-              <div className="hidden lg:block text-left min-w-0">
-                <div className="font-medium truncate">{user.name}</div>
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                    {user.name}
+                  </p>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    12:00
+                  </span>
+                </div>
+                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  {user.email}
+                </p>
               </div>
             </button>
           ))}
-
-          {filteredUsers.length === 0 && (
-            <div className="text-center text-black py-4">No online users</div>
-          )}
         </div>
-      </aside>
-    </div>
+      </div>
+
+      {/* Profile Section */}
+      <div className="p-4 border-t border-gray-100 dark:border-gray-700">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="relative flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+              {session.data?.user?.image ? (
+                <img
+                  src={session.data.user.image}
+                  alt={session.data.user.name || ""}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <User className="w-5 h-5 text-gray-400" />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+              {session.data?.user?.name}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+              {session.data?.user?.email}
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            className="flex-1 flex items-center gap-2 px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+          >
+            {theme === "dark" ? (
+              <Sun className="w-4 h-4" />
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
+            <span>{theme === "dark" ? "Light Mode" : "Dark Mode"}</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 px-3 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg transition-colors"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Logout</span>
+          </button>
+        </div>
+      </div>
+    </aside>
   );
 };
+
 export default Sidebar;

@@ -54,7 +54,7 @@ const HomePage = () => {
         {/* Left Sidebar - sliding on mobile */}
         <div
           className={`fixed inset-y-0 left-0 w-72 bg-white border-r border-gray-100 z-40 transition-transform duration-300 ease-in-out transform 
-            ${showLeftSidebar ? "translate-x-0" : "-translate-x-full"} 
+            ${showLeftSidebar ? "translate-x-0" : "-translate-x-full"} f
             md:translate-x-0 md:relative md:inset-auto`}
         >
           <div className="h-full pt-16 md:pt-0">
