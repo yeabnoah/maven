@@ -20,12 +20,13 @@ const HomePage = () => {
   }, [checkAuth]);
 
   return (
-    <div className="bg-base-200">
+    <div className="bg-white">
       <div className="flex">
         <div className={`fixed inset-y-0 left-0 transform translate-x-0`}>
           <Sidebar />
         </div>
         <div className="flex-1 lg:ml-72 lg:mr-80">
+          {/* <Navbar /> */}
           <div className="h-full mx-auto">
             {!selectedUser ? <NoChatSelected /> : <ChatContainer />}
           </div>

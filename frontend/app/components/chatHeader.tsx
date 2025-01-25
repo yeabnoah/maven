@@ -13,31 +13,31 @@ const ChatHeader = () => {
   if (isMessageLoading) {
     console.log("testing user info better performance");
     return (
-      <div className="p-2.5 mt-[5%] border-b border-base-300">
+      <div className="p-2.5 mt-[5%]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             {/* Avatar */}
             <div className="avatar">
               <div className="size-10 rounded-full relative">
-                <div className="animate-pulse bg-base-300 rounded-full w-full h-full" />
+                <div className="animate-pulse rounded-full w-full h-full" />
               </div>
             </div>
 
             {/* User info */}
             <div>
-              <div className="animate-pulse bg-base-300 rounded w-20 h-4" />
+              <div className="animate-pulse rounded w-20 h-4" />
             </div>
           </div>
 
           {/* Close button */}
-          <div className="animate-pulse bg-base-300 rounded w-8 h-8" />
+          <div className="animate-pulse rounded w-8 h-8" />
         </div>
       </div>
     );
   }
 
   return (
-    <div className="p-2 mt-[6.5vh] ml-20 lg:ml-0 w-[92.5vw] lg:w-[65vw] fixed  bg-base-100 border-b border-base-300/30">
+    <div className="p-2 mt-[6.5vh] ml-20 lg:ml-0 w-[92.5vw] lg:w-[65vw] fixed">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           {/* Avatar */}

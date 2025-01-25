@@ -1,6 +1,6 @@
 "use client";
 import { authClient } from "@/lib/auth-client";
-import { LogOut, MessageSquare, Settings, User } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
@@ -31,8 +31,9 @@ const Navbar = () => {
               href="/"
               className="flex items-center gap-2.5 hover:opacity-80 transition-all"
             >
-              
-              <h1 className="text-lg font-bold px-5 text-indigo-500 lg:text-white">Maven</h1>
+              <h1 className="text-lg font-bold px-5 text-indigo-500 lg:text-white">
+                Maven
+              </h1>
             </Link>
           </div>
 

@@ -9,18 +9,42 @@ import { Label } from "@/components/ui/label";
 import { FaGoogle } from "react-icons/fa";
 import Image from "next/image";
 import Navbar from "@/app/components/navbar";
+import { authClient } from "@/lib/auth-client";
+import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
+// import { useRouter } from "next/navigation/";
 
 export default function SignIn() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  // const router = useRouter();
+
+  const session = authClient.useSession();
+
+  if (session.data?.session) {
+    redirect("/dashboard");
+  }
 
   const handleSignIn = async () => {
     setLoading(true);
-    
-    console.log(email)
 
+    await authClient.signIn.email({
+      email,
+      password,
+      // callbackURL: "/dashboard",
+      fetchOptions: {
+        onSuccess: () => {
+          console.log("LoggedIn successfully");
+          toast.success("LoggedIn successfully");
+        },
+        onError: () => {
+          console.log("Error occurred while logging in");
+          toast.error("Error occurred while logging in");
+        },
+      },
+    });
 
     setLoading(false);
   };
@@ -118,10 +142,15 @@ export default function SignIn() {
 
           <Button
             className="w-full py-5 rounded-md bg-white border border-gray-300 text-gray-700 flex items-center justify-center gap-2 hover:bg-gray-100 transition-all duration-300"
-            onClick={() => {}}
+            onClick={async () => {
+              await authClient.signIn.social({
+                provider: "github",
+                callbackURL: "/dashboard",
+              });
+            }}
           >
             <FaGoogle />
-            Log in with Google
+            Log in with GitHub
           </Button>
 
           <p className="text-center text-sm text-gray-600">

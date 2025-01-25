@@ -50,7 +50,7 @@ const ChatSendUi = () => {
   };
 
   return (
-    <div className="bg-base-100  w-[92.5vw] lg:w-[65vw] shadow-lg flex-1 mx-auto lg:mx-0 rounded-lg fixed bottom-0 p-4">
+    <div className="  w-[92.5vw] lg:w-[65vw] shadow-lg flex-1 mx-auto lg:mx-0 rounded-lg fixed bottom-0 p-4">
       {image && (
         <div className="mb-4 flex-col items-end flex">
           <button
@@ -71,7 +71,7 @@ const ChatSendUi = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex items-center gap-3 border-t border-base-300 pt-4"
       >
-        <label className="flex items-center justify-center w-10 h-10 bg-base-200 text-base-content rounded-full cursor-pointer hover:bg-base-300">
+        <label className="flex items-center justify-center w-10 h-10 text-base-content rounded-full cursor-pointer">
           <input type="file" className="hidden" onChange={handleImageStuff} />
           📎
         </label>
