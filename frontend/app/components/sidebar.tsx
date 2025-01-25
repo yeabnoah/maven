@@ -1,13 +1,13 @@
 "use client";
 
+import { authClient } from "@/lib/auth-client";
 import useChatStore from "@/store/chat.store";
-import { LogOut, Moon, Search, Settings, Sun, User, Users } from "lucide-react";
+import useCheckAuth from "@/store/checkAuth";
+import { LogOut, Moon, Search, Sun, User, Users } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import SidebarSkeleton from "./sidebarScheleton";
-import useCheckAuth from "@/store/checkAuth";
-import { useTheme } from "next-themes";
-import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 const Sidebar = () => {
   const { getUsers, users, isUsersLoading, setSelectedUser, selectedUser } =
@@ -17,6 +17,7 @@ const Sidebar = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { theme, setTheme } = useTheme();
   const session = authClient.useSession();
+  const router = useRouter();
 
   useEffect(() => {
     getUsers();
@@ -47,7 +48,9 @@ const Sidebar = () => {
             <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-500/20 rounded-lg flex items-center justify-center">
               <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             </div>
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Contacts</h2>
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+              Contacts
+            </h2>
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -72,15 +75,19 @@ const Sidebar = () => {
         <div className="mt-3 flex items-center gap-2">
           <button
             onClick={() => setShowOnlineOnly(!showOnlineOnly)}
-            className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${showOnlineOnly ? "bg-indigo-600" : "bg-gray-200 dark:bg-gray-600"
-              }`}
+            className={`relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+              showOnlineOnly ? "bg-indigo-600" : "bg-gray-200 dark:bg-gray-600"
+            }`}
           >
             <span
-              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${showOnlineOnly ? "translate-x-4" : "translate-x-0"
-                }`}
+              className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                showOnlineOnly ? "translate-x-4" : "translate-x-0"
+              }`}
             />
           </button>
-          <span className="text-sm text-gray-600 dark:text-gray-300">Show online only</span>
+          <span className="text-sm text-gray-600 dark:text-gray-300">
+            Show online only
+          </span>
         </div>
       </div>
 
@@ -91,10 +98,11 @@ const Sidebar = () => {
             <button
               key={user.id}
               onClick={() => setSelectedUser(user)}
-              className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${selectedUser?.id === user.id
-                ? "bg-indigo-50 dark:bg-indigo-500/10"
-                : ""
-                }`}
+              className={`w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors ${
+                selectedUser?.id === user.id
+                  ? "bg-indigo-50 dark:bg-indigo-500/10"
+                  : ""
+              }`}
             >
               <div className="relative flex-shrink-0">
                 <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
@@ -135,32 +143,36 @@ const Sidebar = () => {
 
       {/* Profile Section */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-700">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative flex-shrink-0">
-            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-              {session.data?.user?.image ? (
-                <img
-                  src={session.data.user.image}
-                  alt={session.data.user.name || ""}
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <User className="w-5 h-5 text-gray-400" />
-                </div>
-              )}
+        {/* Profile Section */}
+        <div onClick={() => router.push("/profile")} className="cursor-pointer">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="relative flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                {session.data?.user?.image ? (
+                  <img
+                    src={session.data.user.image}
+                    alt={session.data.user.name || ""}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    <User className="w-5 h-5 text-gray-400" />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-              {session.data?.user?.name}
-            </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-              {session.data?.user?.email}
-            </p>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                {session.data?.user?.name}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                {session.data?.user?.email}
+              </p>
+            </div>
           </div>
         </div>
 
+        {/* Theme Toggle and Logout Buttons */}
         <div className="flex items-center gap-2">
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

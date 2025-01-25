@@ -10,6 +10,7 @@ interface UserInterface {
   image: string;
   createdAt: Date;
   updatedAt: Date;
+  bio?: string;
 }
 
 type useUserInterface = {
@@ -29,6 +30,7 @@ const useUserStore = create<useUserInterface>((set) => ({
     image: "",
     createdAt: new Date(),
     updatedAt: new Date(),
+    bio: "",
   },
 
   isLoading: false,
@@ -77,6 +79,7 @@ const useUserStore = create<useUserInterface>((set) => ({
         image: "",
         createdAt: new Date(),
         updatedAt: new Date(),
+        bio: "",
       },
     });
   },

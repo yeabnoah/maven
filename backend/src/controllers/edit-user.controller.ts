@@ -2,30 +2,28 @@ import { Request, Response } from "express";
 import cloudinary from "../lib/cloudinary";
 import { prisma } from "../lib/prisma.config";
 import { Prisma } from "@prisma/client";
-import multer from "multer";
-
-const upload = multer({ dest: "uploads/" });
 
 export const editUser = async (req: Request, res: Response): Promise<void> => {
   try {
+    console.log("Received data:", req.body);
+
     const user = req.user;
-    const { name } = req.body;
-    const file = req.file;
+    const { name, bio, image } = req.body;
 
     if (!user) {
       res.status(401).json({ message: "You are not authorized" });
       return;
     }
 
-    if (!file && !name) {
+    if (!image && !name && !bio) {
       res.status(400).json({ message: "At least one field is required" });
       return;
     }
 
     const updateData: Prisma.UserUpdateInput = {};
 
-    if (file) {
-      const uploadedImage = await cloudinary.uploader.upload(file.path, {
+    if (image) {
+      const uploadedImage = await cloudinary.uploader.upload(image, {
         folder: "user_images",
         resource_type: "image",
       });
@@ -37,6 +35,10 @@ export const editUser = async (req: Request, res: Response): Promise<void> => {
       updateData.name = name;
     }
 
+    if (bio) {
+      updateData.bio = bio;
+    }
+
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: updateData,
@@ -46,11 +48,12 @@ export const editUser = async (req: Request, res: Response): Promise<void> => {
       .status(200)
       .json({ message: "Successfully updated user", data: updatedUser });
   } catch (error) {
-    console.error("Error updating user:", error);
+    console.error("Error updating user:", error); // Log the error
     res
       .status(500)
       .json({ message: "Error occurred while updating user", error });
   }
 };
 
-export const editUserRoute = [upload.single("image"), editUser];
+// Express route to handle JSON requests
+export const editUserRoute = [editUser];
