@@ -21,6 +21,14 @@ const UserInfoSidebar = () => {
   return (
     <div className="p-6 space-y-6">
       {/* General Info */}
+
+      <div>
+        <img
+          className=" rounded-xl size-full image-full mx-auto"
+          src={selectedUser?.image || "/user-placeholder.png"}
+          alt={selectedUser?.name}
+        />
+      </div>
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-medium text-gray-900">General Info</h3>
@@ -32,6 +40,11 @@ const UserInfoSidebar = () => {
             <span className="text-gray-900">
               {selectedUser?.email || "N/A"}
             </span>
+          </div>
+
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>Name:</span>
+            <span className="text-gray-900">{selectedUser?.name || "N/A"}</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <span>Status:</span>
