@@ -37,15 +37,23 @@ const HomePage = () => {
           onClick={() => setShowLeftSidebar(!showLeftSidebar)}
           className="p-2 hover:bg-gray-100 rounded-lg"
         >
-          {showLeftSidebar ? <X size={24} /> : <Menu size={24} />}
+          {showLeftSidebar ? (
+            <X size={24} color="black" />
+          ) : (
+            <Menu size={24} color="black" />
+          )}
         </button>
-        <h1 className="text-lg font-semibold">Maven Chat</h1>
+        <h1 className="text-lg font-semibold text-black">Maven Chat</h1>
         {selectedUser && (
           <button
             onClick={() => setShowRightSidebar(!showRightSidebar)}
             className="p-2 hover:bg-gray-100 rounded-lg"
           >
-            {showRightSidebar ? <X size={24} /> : <Users size={24} />}
+            {showRightSidebar ? (
+              <X size={24} color="black" />
+            ) : (
+              <Users size={24} color="black" />
+            )}
           </button>
         )}
       </div>
